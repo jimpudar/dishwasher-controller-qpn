@@ -107,7 +107,7 @@ void BSP_init(void)
     pinMode(PIN_ANALOG_INPUT_420MA_RTD, INPUT);
 }
 
-uint8_t readTemperature()
+uint8_t BSP_readTemperature()
 {
     uint16_t raw = analogRead(PIN_ANALOG_INPUT_420MA_RTD);
 
