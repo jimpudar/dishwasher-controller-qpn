@@ -107,19 +107,35 @@ void BSP_init(void)
     pinMode(PIN_ANALOG_INPUT_420MA_RTD, INPUT);
 }
 
-uint8_t BSP_readTemperature()
-{
-    uint16_t raw = analogRead(PIN_ANALOG_INPUT_420MA_RTD);
 
+
+int16_t BSP_readTemperature(void)
+{
     // AVR ADC: 10-bit, 0-1023, with 5V reference
-    // voltsV = raw / 1023 * 5V
+
+    uint32_t sum = 0;
+    for (uint8_t i = 0; i < 16; i++)
+    {
+        sum += analogRead(PIN_ANALOG_INPUT_420MA_RTD);
+    }
+
+    // oversample to 1023 * 4 == 4092 bits
+
+    uint16_t adc = sum >> 2;
+    if (adc < 820) {  // ~4mA threshold in 12-bit scale
+        QACTIVE_POST(AO_Dishwasher, RTD_FAULT_SIG, 0);
+        // QACTIVE_POST(AO_Heater, RTD_FAULT_SIG, 0);
+        return INT16_MIN;
+    }
+
+    // voltsV = raw / 4092 * 5V
     // currentA = voltsV / 250Ohm
     // currentmA = voltsV * 4mS
 
     // Scaling function for -50C to 150C RTD - will need to change if the RTD / transmitter is different
     // temp = (currentmA - 4) * 12.5 - 50
 
-    uint8_t temp = ((int32_t)raw * 250 - 102300) / 1023;
+    int16_t temp = ((int32_t)adc * 250 - 409200) / 4092;
     DEBUG_PRINT(F("Read temperature: "));
     DEBUG_PRINT(temp);
     DEBUG_PRINTLN(F(" C"));
