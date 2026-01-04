@@ -1,0 +1,10 @@
+﻿#ifndef DISHWASHERCONTROLLER_SIGNALS_H
+#define DISHWASHERCONTROLLER_SIGNALS_H
+
+#include "qpn.h"
+
+enum DishwasherSignals {
+    EXAMPLE_SIGNAL = Q_USER_SIG,
+};
+
+#endif //DISHWASHERCONTROLLER_SIGNALS_H
