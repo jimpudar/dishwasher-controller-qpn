@@ -7,6 +7,7 @@ extern "C"
 #endif
 
     void BSP_init(void);
+    uint8_t BSP_readTemperature();
 
 #ifdef __cplusplus
 }

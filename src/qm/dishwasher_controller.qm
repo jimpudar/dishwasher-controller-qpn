@@ -11,9 +11,15 @@
      </initial_glyph>
     </initial>
     <state name="state1">
+     <tran trig="DOOR_CLOSE" target="..">
+      <action>BSP_readTemperature();</action>
+      <tran_glyph conn="28,16,1,1,2,7,-2">
+       <action box="0,-2,16,2"/>
+      </tran_glyph>
+     </tran>
      <state_glyph node="5,11,23,16"/>
     </state>
-    <state_diagram size="30,30"/>
+    <state_diagram size="86,74"/>
    </statechart>
   </class>
  </package>

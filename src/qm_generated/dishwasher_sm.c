@@ -37,6 +37,12 @@ QState Dishwasher_initial(Dishwasher * const me) {
 QState Dishwasher_state1(Dishwasher * const me) {
     QState status_;
     switch (Q_SIG(me)) {
+        /*.${AOs::Dishwasher::SM::state1::DOOR_CLOSE} */
+        case DOOR_CLOSE_SIG: {
+            BSP_readTemperature();
+            status_ = Q_TRAN(&Dishwasher_state1);
+            break;
+        }
         default: {
             status_ = Q_SUPER(&QHsm_top);
             break;

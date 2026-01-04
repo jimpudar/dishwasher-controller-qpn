@@ -120,11 +120,19 @@ uint8_t BSP_readTemperature()
     // temp = (currentmA - 4) * 12.5 - 50
 
     uint8_t temp = ((int32_t)raw * 250 - 102300) / 1023;
-    DEBUG_PRINT(F("Read temperature"));
+    DEBUG_PRINT(F("Read temperature: "));
     DEBUG_PRINT(temp);
     DEBUG_PRINTLN(F(" C"));
 
     return temp;
+}
+
+// bodge since I didn't RTFM (A6 and A7 are analog only)
+bool readDigitalInput(uint8_t pin) {
+    if (pin == A6 || pin == A7) {
+        return analogRead(pin) > 512;
+    }
+    return digitalRead(pin);
 }
 
 ISR(TIMER2_COMPA_vect)
@@ -138,7 +146,7 @@ ISR(TIMER2_COMPA_vect)
 
     for (uint8_t i = 0; i < NUM_INPUTS; i++)
     {
-        uint8_t reading = digitalRead(inputs[i].pin);
+        uint8_t reading = readDigitalInput(inputs[i].pin);
 
         if (reading == last[i])
         {
