@@ -27,11 +27,12 @@ Dishwasher AO_Dishwasher;
 static QEvt l_dishwasherQSto[10];
 
 QActiveCB const Q_ROM QF_active[] = {
-    { (QActive *)0,           (QEvt *)0,        0U                  },
-    { (QActive *)&AO_Dishwasher,  l_dishwasherQSto,     Q_DIM(l_dishwasherQSto) }
+    {(QActive *)0,              (QEvt *)0,        0U                     },
+    {(QActive *)&AO_Dishwasher, l_dishwasherQSto, Q_DIM(l_dishwasherQSto)}
 };
 
-void setup() {
+void setup()
+{
     QF_init(Q_DIM(QF_active));
 
     QActive_ctor(&AO_Dishwasher.super, Q_STATE_CAST(&Dishwasher_initial));
@@ -39,10 +40,7 @@ void setup() {
     BSP_init();
 }
 
-void loop() {
+void loop()
+{
     QF_run(); // run the QF-nano framework
-}
-
-ISR(TIMER2_COMPA_vect) {
-    QF_tickXISR(0); // process time events for tick rate 0
 }

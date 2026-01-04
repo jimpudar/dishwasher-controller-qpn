@@ -1,0 +1,6 @@
+﻿#ifndef DISHWASHERCONTROLLER_COMMON_H
+#define DISHWASHERCONTROLLER_COMMON_H
+
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+
+#endif // DISHWASHERCONTROLLER_COMMON_H

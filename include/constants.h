@@ -3,10 +3,13 @@
 
 //============================================================================
 // various constants for the application...
-enum {
+enum
+{
     BSP_TICKS_PER_SEC = 100, // number of system clock ticks in one second
-    LED_L = 13               // the pin number of the on-board LED (L)
+
+    INACTIVE = 0x0,
+    ACTIVE = 0x1,
 };
 
 //............................................................................
-#endif //DISHWASHERCONTROLLER_CONSTANTS_H
+#endif // DISHWASHERCONTROLLER_CONSTANTS_H
