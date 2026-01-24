@@ -7,9 +7,13 @@ enum
 {
     BSP_TICKS_PER_SEC = 100, // number of system clock ticks in one second
     TICKS_PER_MINUTE = (60U * BSP_TICKS_PER_SEC),
+
+    STARTUP_DELAY_TICKS = 5 * BSP_TICKS_PER_SEC, // allow RTC to come up to temp
     TIMEDFILL_TIMEOUT_TICKS = 5U * TICKS_PER_MINUTE,
     WASHCYCLE_TIMEOUT_TICKS = 5U * TICKS_PER_MINUTE,
     RINSECYCLE_TIMEOUT_TICKS = 2U * TICKS_PER_MINUTE,
+
+    TEMPPOLL_TIMEOUT_TICKS = 10U * BSP_TICKS_PER_SEC,
 };
 
 typedef enum

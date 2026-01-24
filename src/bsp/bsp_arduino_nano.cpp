@@ -2,10 +2,12 @@
 #include "bsp.h"
 #include "qpn.h"
 
+#include "app/heater_helpers.h"
 #include "constants.h"
 #include "debug.h"
 #include "qm_generated/dishwasher_sm.h"
 #include "signals.h"
+
 #include <Arduino.h>
 
 enum
@@ -137,8 +139,10 @@ int16_t BSP_readTemperature()
     // oversample to 1023 * 4 == 4092 bits
 
     uint16_t adc = sum >> 2;
-    if (adc < 820)
-    { // ~4mA threshold in 12-bit scale
+    if (adc < 750)
+    { // ~3.7mA threshold in 12-bit scale indicates open RDT loop
+        DEBUG_PRINT(F("FAULT temp adc: "));
+        DEBUG_PRINTLN(adc);
         QACTIVE_POST(AO_Dishwasher, RTD_FAULT_SIG, 0);
         // QACTIVE_POST(AO_Heater, RTD_FAULT_SIG, 0);
         return INT16_MIN;
@@ -148,10 +152,10 @@ int16_t BSP_readTemperature()
     // currentA = voltsV / 250Ohm
     // currentmA = voltsV * 4mS
 
-    // Scaling function for -50C to 150C RTD - will need to change if the RTD / transmitter is different
-    // temp = (currentmA - 4) * 12.5 - 50
+    // Scaling function for 0C to 100C RTD
+    // temp = (currentmA - 4) * 6.25
 
-    int16_t temp = ((int32_t)adc * 250 - 409200) / 4092;
+    int16_t temp = ((int32_t)adc * 125 - 102300) / 4092;
     DEBUG_PRINT(F("Read temperature: "));
     DEBUG_PRINT(temp);
     DEBUG_PRINTLN(F(" C"));
@@ -234,6 +238,14 @@ void QF_onStartup(void)
 
 void QV_onIdle(void)
 {
+    static uint32_t lastPoll = 0;
+    uint32_t now = millis();
+
+    if (now - lastPoll >= 10000UL) {
+        lastPoll = now;
+        Heater_pollTemperature();
+    }
+
     // called with interrupts DISABLED
     // Put the CPU and peripherals to the low-power mode. You might
     // need to customize the clock management for your application,

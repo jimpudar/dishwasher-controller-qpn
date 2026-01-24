@@ -9,16 +9,8 @@ void Dishwasher_startup(QActive *me)
 {
     if (Dishwasher_isManualSwitchEngaged())
     {
-        DEBUG_PRINTLN("startup with manual engaged");
+        DEBUG_PRINTLN(F("startup with manual engaged"));
         QACTIVE_POST(me, STARTUP_FAULT_SIG, 0U);
-        return;
-    }
-
-    // if the RTD loop is open, we emit RTD_FAULT_SIG from BSP
-    if (Dishwasher_waterInTankIsOverSafeTemperature())
-    {
-        DEBUG_PRINTLN("startup over temp");
-        QACTIVE_POST(me, OVER_TEMP_FAULT_SIG, 0U);
         return;
     }
 
@@ -35,17 +27,30 @@ void Dishwasher_handleDoorOpening()
 
 bool Dishwasher_isReadyToWash()
 {
+    DEBUG_PRINTLN(F("Check readytowash"));
     if (Dishwasher_isManualSwitchEngaged())
+    {
+        DEBUG_PRINTLN(F("no - man sw"));
         return false;
+    }
 
     if (!Dishwasher_waterInTankIsAtWashTemperature())
+    {
+        DEBUG_PRINTLN(F("no - wash temp"));
         return false;
+    }
 
     if (!BSP_isFloatClosed())
+    {
+        DEBUG_PRINTLN(F("no - float open"));
         return false;
+    }
 
     if (!BSP_isDoorClosed())
+    {
+        DEBUG_PRINTLN(F("no - door open"));
         return false;
+    }
 
     return true;
 }
@@ -118,6 +123,7 @@ void Dishwasher_stopRinseCycle()
 
 void Dishwasher_enterFaultMode()
 {
+    DEBUG_PRINTLN(F("Enter fault"));
     BSP_setOutputLogicalState(RELAY_MOTOR, INACTIVE);
     BSP_setOutputLogicalState(RELAY_FILL, INACTIVE);
     BSP_setOutputLogicalState(RELAY_DETERGENT, INACTIVE);

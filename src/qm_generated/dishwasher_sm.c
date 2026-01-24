@@ -109,6 +109,11 @@ QState Dishwasher_DoorClosed(Dishwasher * const me) {
             status_ = Q_TRAN(&Dishwasher_Idle);
             break;
         }
+        /*.${AOs::Dishwasher::SM::Operating::DoorClosed::STOP_CLOSE} */
+        case STOP_CLOSE_SIG: {
+            status_ = Q_TRAN(&Dishwasher_Idle);
+            break;
+        }
         default: {
             status_ = Q_SUPER(&Dishwasher_Operating);
             break;

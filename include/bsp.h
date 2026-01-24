@@ -2,6 +2,8 @@
 #define DISHWASHERCONTROLLER_BSP_H
 #include "constants.h"
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C"
 {
