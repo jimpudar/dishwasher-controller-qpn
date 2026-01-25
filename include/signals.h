@@ -23,6 +23,8 @@ enum DishwasherSignals
     STARTUP_FAULT_SIG,
     RTD_FAULT_SIG,
     OVER_TEMP_FAULT_SIG,
+
+    FAULT_SIG,
 };
 
 #endif // DISHWASHERCONTROLLER_SIGNALS_H

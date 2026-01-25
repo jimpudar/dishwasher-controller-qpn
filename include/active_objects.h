@@ -8,6 +8,6 @@
 #include "qpn.h"
 
 extern QActive * const AO_Dishwasher;
-// extern QActive * const AO_Heater;
+extern QActive * const AO_Heater;
 
 #endif // DISHWASHERCONTROLLER_ACTIVE_OBJECTS_H

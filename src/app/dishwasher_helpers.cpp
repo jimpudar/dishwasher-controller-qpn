@@ -1,5 +1,6 @@
 ﻿#include "dishwasher_helpers.h"
 
+#include "active_objects.h"
 #include "bsp.h"
 #include "constants.h"
 #include "debug.h"
@@ -19,6 +20,7 @@ void Dishwasher_startup(QActive *me)
 
 void Dishwasher_handleDoorOpening()
 {
+    DEBUG_PRINTLN(F("DOOR OPENED"));
     BSP_setOutputLogicalState(RELAY_MOTOR, INACTIVE);
     BSP_setOutputLogicalState(RELAY_FILL, INACTIVE);
     BSP_setOutputLogicalState(RELAY_DETERGENT, INACTIVE);
@@ -27,28 +29,28 @@ void Dishwasher_handleDoorOpening()
 
 bool Dishwasher_isReadyToWash()
 {
-    DEBUG_PRINTLN(F("Check readytowash"));
+    DEBUG_PRINTLN(F("READY TO WASH?"));
     if (Dishwasher_isManualSwitchEngaged())
     {
-        DEBUG_PRINTLN(F("no - man sw"));
+        DEBUG_PRINTLN(F("NO - man sw"));
         return false;
     }
 
     if (!Dishwasher_waterInTankIsAtWashTemperature())
     {
-        DEBUG_PRINTLN(F("no - wash temp"));
+        DEBUG_PRINTLN(F("NO - wash temp"));
         return false;
     }
 
     if (!BSP_isFloatClosed())
     {
-        DEBUG_PRINTLN(F("no - float open"));
+        DEBUG_PRINTLN(F("NO - float open"));
         return false;
     }
 
     if (!BSP_isDoorClosed())
     {
-        DEBUG_PRINTLN(F("no - door open"));
+        DEBUG_PRINTLN(F("NO - door open"));
         return false;
     }
 
@@ -61,7 +63,7 @@ bool Dishwasher_waterInTankIsAtWashTemperature()
 {
     const int16_t temp = BSP_readTemperature();
 
-    return temp > 65 && temp < 88;
+    return temp > MINIMUM_WASH_TEMP && temp < MAXIMUM_SAFE_TEMP;
 }
 
 bool Dishwasher_waterInTankIsOverSafeTemperature()
@@ -86,30 +88,35 @@ void Dishwasher_turnOffRinseValve() { BSP_setOutputLogicalState(RELAY_FILL, INAC
 
 void Dishwasher_startTimedFill()
 {
+    DEBUG_PRINTLN(F("START TIMED FILL"));
     BSP_setOutputLogicalState(INDICATOR_FILL, ACTIVE);
     BSP_setOutputLogicalState(RELAY_FILL, ACTIVE);
 }
 
 void Dishwasher_stopTimedFill()
 {
+    DEBUG_PRINTLN(F("STOP TIMED FILL"));
     BSP_setOutputLogicalState(INDICATOR_FILL, INACTIVE);
     BSP_setOutputLogicalState(RELAY_FILL, INACTIVE);
 }
 
 void Dishwasher_startWashCycle()
 {
+    DEBUG_PRINTLN(F("START WASH"));
     BSP_setOutputLogicalState(RELAY_MOTOR, ACTIVE);
     BSP_setOutputLogicalState(RELAY_DETERGENT, ACTIVE);
 }
 
 void Dishwasher_stopWashCycle()
 {
+    DEBUG_PRINTLN(F("STOP WASH"));
     BSP_setOutputLogicalState(RELAY_MOTOR, INACTIVE);
     BSP_setOutputLogicalState(RELAY_DETERGENT, INACTIVE);
 }
 
 void Dishwasher_startRinseCycle()
 {
+    DEBUG_PRINTLN(F("START RINSE"));
     BSP_setOutputLogicalState(INDICATOR_RINSE, ACTIVE);
     BSP_setOutputLogicalState(RELAY_FILL, ACTIVE);
     BSP_setOutputLogicalState(RELAY_RINSEAID, ACTIVE);
@@ -117,6 +124,7 @@ void Dishwasher_startRinseCycle()
 
 void Dishwasher_stopRinseCycle()
 {
+    DEBUG_PRINTLN(F("STOP RINSE"));
     BSP_setOutputLogicalState(INDICATOR_RINSE, INACTIVE);
     BSP_setOutputLogicalState(RELAY_FILL, INACTIVE);
     BSP_setOutputLogicalState(RELAY_RINSEAID, INACTIVE);
@@ -124,7 +132,8 @@ void Dishwasher_stopRinseCycle()
 
 void Dishwasher_enterFaultMode()
 {
-    DEBUG_PRINTLN(F("Enter fault"));
+    DEBUG_PRINTLN(F("FAULT"));
+    QACTIVE_POST(AO_Heater, FAULT_SIG, 0U);
     BSP_setOutputLogicalState(RELAY_MOTOR, INACTIVE);
     BSP_setOutputLogicalState(RELAY_FILL, INACTIVE);
     BSP_setOutputLogicalState(RELAY_DETERGENT, INACTIVE);

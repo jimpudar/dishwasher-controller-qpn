@@ -37,6 +37,16 @@ QState Heater_initial(Heater * const me) {
 QState Heater_Operating(Heater * const me) {
     QState status_;
     switch (Q_SIG(me)) {
+        /*.${AOs::Heater::SM::Operating::initial} */
+        case Q_INIT_SIG: {
+            status_ = Q_TRAN(&Heater_NotHeating);
+            break;
+        }
+        /*.${AOs::Heater::SM::Operating::FAULT} */
+        case FAULT_SIG: {
+            status_ = Q_TRAN(&Heater_Fault);
+            break;
+        }
         default: {
             status_ = Q_SUPER(&QHsm_top);
             break;
@@ -106,6 +116,11 @@ QState Heater_NotHeating(Heater * const me) {
             status_ = Q_HANDLED();
             break;
         }
+        /*.${AOs::Heater::SM::Operating::NotHeating::initial} */
+        case Q_INIT_SIG: {
+            status_ = Q_TRAN(&Heater_NotHeatingInner);
+            break;
+        }
         default: {
             status_ = Q_SUPER(&Heater_Operating);
             break;
@@ -137,6 +152,23 @@ QState Heater_NotHeatingInner(Heater * const me) {
         }
         default: {
             status_ = Q_SUPER(&Heater_NotHeating);
+            break;
+        }
+    }
+    return status_;
+}
+/*.${AOs::Heater::SM::Operating::Fault} ....................................*/
+QState Heater_Fault(Heater * const me) {
+    QState status_;
+    switch (Q_SIG(me)) {
+        /*.${AOs::Heater::SM::Operating::Fault} */
+        case Q_ENTRY_SIG: {
+            Heater_stopHeating();
+            status_ = Q_HANDLED();
+            break;
+        }
+        default: {
+            status_ = Q_SUPER(&Heater_Operating);
             break;
         }
     }

@@ -109,11 +109,6 @@ QState Dishwasher_DoorClosed(Dishwasher * const me) {
             status_ = Q_TRAN(&Dishwasher_Idle);
             break;
         }
-        /*.${AOs::Dishwasher::SM::Operating::DoorClosed::STOP_CLOSE} */
-        case STOP_CLOSE_SIG: {
-            status_ = Q_TRAN(&Dishwasher_Idle);
-            break;
-        }
         default: {
             status_ = Q_SUPER(&Dishwasher_Operating);
             break;
@@ -128,19 +123,24 @@ QState Dishwasher_TimedFill(Dishwasher * const me) {
         /*.${AOs::Dishwasher::SM::Operating::DoorClosed::TimedFill} */
         case Q_ENTRY_SIG: {
             QActive_armX(&me->super, 0U, TIMEDFILL_TIMEOUT_TICKS, 0U);
-
+            Dishwasher_startTimedFill();
             status_ = Q_HANDLED();
             break;
         }
         /*.${AOs::Dishwasher::SM::Operating::DoorClosed::TimedFill} */
         case Q_EXIT_SIG: {
             QActive_disarmX(&me->super, 0U);
-
+            Dishwasher_stopTimedFill();
             status_ = Q_HANDLED();
             break;
         }
         /*.${AOs::Dishwasher::SM::Operating::DoorClosed::TimedFill::Q_TIMEOUT} */
         case Q_TIMEOUT_SIG: {
+            status_ = Q_TRAN(&Dishwasher_Idle);
+            break;
+        }
+        /*.${AOs::Dishwasher::SM::Operating::DoorClosed::TimedFill::STOP_CLOSE} */
+        case STOP_CLOSE_SIG: {
             status_ = Q_TRAN(&Dishwasher_Idle);
             break;
         }
@@ -174,6 +174,11 @@ QState Dishwasher_WashCycle(Dishwasher * const me) {
             status_ = Q_TRAN(&Dishwasher_RinseCycle);
             break;
         }
+        /*.${AOs::Dishwasher::SM::Operating::DoorClosed::WashCycle::STOP_CLOSE} */
+        case STOP_CLOSE_SIG: {
+            status_ = Q_TRAN(&Dishwasher_Idle);
+            break;
+        }
         default: {
             status_ = Q_SUPER(&Dishwasher_DoorClosed);
             break;
@@ -201,6 +206,11 @@ QState Dishwasher_RinseCycle(Dishwasher * const me) {
         }
         /*.${AOs::Dishwasher::SM::Operating::DoorClosed::RinseCycle::Q_TIMEOUT} */
         case Q_TIMEOUT_SIG: {
+            status_ = Q_TRAN(&Dishwasher_Idle);
+            break;
+        }
+        /*.${AOs::Dishwasher::SM::Operating::DoorClosed::RinseCycle::STOP_CLOSE} */
+        case STOP_CLOSE_SIG: {
             status_ = Q_TRAN(&Dishwasher_Idle);
             break;
         }

@@ -42,6 +42,7 @@ QState Heater_Heating(Heater * const me);
 QState Heater_HeatingInner(Heater * const me);
 QState Heater_NotHeating(Heater * const me);
 QState Heater_NotHeatingInner(Heater * const me);
+QState Heater_Fault(Heater * const me);
 /*.$enddecl${AOs::Heater} ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 #ifdef __cplusplus
