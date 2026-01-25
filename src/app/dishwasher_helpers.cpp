@@ -86,6 +86,29 @@ void Dishwasher_turnOffPumpMotor() { BSP_setOutputLogicalState(RELAY_MOTOR, INAC
 void Dishwasher_turnOnRinseValve() { BSP_setOutputLogicalState(RELAY_FILL, ACTIVE); }
 void Dishwasher_turnOffRinseValve() { BSP_setOutputLogicalState(RELAY_FILL, INACTIVE); }
 
+void Dishwasher_startIdle()
+{
+    DEBUG_PRINTLN(F("START IDLE"));
+    int16_t temp = BSP_readTemperature();
+    if (!BSP_isFloatClosed() || temp < MINIMUM_WASH_TEMP)
+    {
+        BSP_setOutputLogicalState(INDICATOR_READY, INACTIVE);
+    }
+    else if (BSP_isFloatClosed() && temp >= MINIMUM_WASH_TEMP && temp <= MAXIMUM_SAFE_TEMP)
+    {
+        BSP_setOutputLogicalState(INDICATOR_READY, ACTIVE);
+    }
+    else if (temp > MAXIMUM_SAFE_TEMP)
+    {
+        QACTIVE_POST(AO_Heater, FAULT_SIG, 0U);
+        QACTIVE_POST(AO_Dishwasher, OVER_TEMP_FAULT_SIG, 0U);
+    }
+}
+void Dishwasher_stopIdle()
+{
+    BSP_setOutputLogicalState(INDICATOR_READY, INACTIVE);
+}
+
 void Dishwasher_startTimedFill()
 {
     DEBUG_PRINTLN(F("START TIMED FILL"));

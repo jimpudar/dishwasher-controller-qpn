@@ -225,9 +225,27 @@ QState Dishwasher_RinseCycle(Dishwasher * const me) {
 QState Dishwasher_Idle(Dishwasher * const me) {
     QState status_;
     switch (Q_SIG(me)) {
+        /*.${AOs::Dishwasher::SM::Operating::DoorClosed::Idle} */
+        case Q_ENTRY_SIG: {
+            QActive_armX(&me->super, 0U, HEAT_LOOP_TIMEOUT_TICKS, 0U);
+            Dishwasher_startIdle();
+            status_ = Q_HANDLED();
+            break;
+        }
+        /*.${AOs::Dishwasher::SM::Operating::DoorClosed::Idle} */
+        case Q_EXIT_SIG: {
+            Dishwasher_stopIdle();
+            status_ = Q_HANDLED();
+            break;
+        }
         /*.${AOs::Dishwasher::SM::Operating::DoorClosed::Idle::TIMEDFILL_CLOSE} */
         case TIMEDFILL_CLOSE_SIG: {
             status_ = Q_TRAN(&Dishwasher_TimedFill);
+            break;
+        }
+        /*.${AOs::Dishwasher::SM::Operating::DoorClosed::Idle::Q_TIMEOUT} */
+        case Q_TIMEOUT_SIG: {
+            status_ = Q_TRAN(&Dishwasher_Idle);
             break;
         }
         default: {

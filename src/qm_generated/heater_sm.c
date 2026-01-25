@@ -70,6 +70,11 @@ QState Heater_Heating(Heater * const me) {
             status_ = Q_HANDLED();
             break;
         }
+        /*.${AOs::Heater::SM::Operating::Heating::FLOAT_OPEN} */
+        case FLOAT_OPEN_SIG: {
+            status_ = Q_TRAN(&Heater_NotHeating);
+            break;
+        }
         default: {
             status_ = Q_SUPER(&Heater_Operating);
             break;

@@ -20,6 +20,7 @@ void Heater_startHeating()
     DEBUG_PRINTLN(F("HEAT ON"));
     BSP_setOutputLogicalState(RELAY_HEATER, ACTIVE);
 }
+
 bool Heater_ltUpperHystThresh()
 {
     int16_t temp = BSP_readTemperature();
@@ -29,20 +30,4 @@ bool Heater_gtLowerHystThresh()
 {
     int16_t temp = BSP_readTemperature();
     return temp > HEAT_LOWER_HYSTERESIS_TEMP;
-}
-
-void Heater_setReadyIndicator(int16_t temp)
-{
-    if (temp <= MINIMUM_WASH_TEMP)
-    {
-        BSP_setOutputLogicalState(INDICATOR_READY, INACTIVE);
-    }
-    if (temp > MINIMUM_WASH_TEMP && temp <= MAXIMUM_SAFE_TEMP)
-    {
-        BSP_setOutputLogicalState(INDICATOR_READY, ACTIVE);
-    }
-    if (temp > MAXIMUM_SAFE_TEMP)
-    {
-        QACTIVE_POST(AO_Dishwasher, OVER_TEMP_FAULT_SIG, 0U);
-    }
 }

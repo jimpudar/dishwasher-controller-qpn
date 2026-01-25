@@ -43,6 +43,9 @@ extern "C"
      */
     bool Dishwasher_waterInTankIsOverSafeTemperature(void);
 
+    void Dishwasher_startIdle(void);
+    void Dishwasher_stopIdle(void);
+
     /**
      * @brief Start the Timed Fill cycle. Timeouts are handled in QM, this just handles the outputs.
      */
