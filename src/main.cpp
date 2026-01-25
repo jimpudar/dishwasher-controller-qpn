@@ -23,17 +23,22 @@
 #include "bsp.h"
 #include "debug.h"
 #include "qm_generated/dishwasher_sm.h"
+#include "qm_generated/heater_sm.h"
 
 static Dishwasher dishwasher_inst;
+static Heater heater_inst;
 
 // The global pointer to the Active Object from include/active_objects.h
 QActive *const AO_Dishwasher = &dishwasher_inst.super;
+QActive *const AO_Heater = &heater_inst.super;
 
 static QEvt l_dishwasherQSto[10];
+static QEvt l_heaterQSto[10];
 
 QActiveCB const Q_ROM QF_active[] = {
     {(QActive *)0,  (QEvt *)0,        0U                     },
-    {AO_Dishwasher, l_dishwasherQSto, Q_DIM(l_dishwasherQSto)}
+    {AO_Dishwasher, l_dishwasherQSto, Q_DIM(l_dishwasherQSto)},
+    {AO_Heater,     l_heaterQSto,     Q_DIM(l_heaterQSto)    }
 };
 
 void setup()
@@ -44,6 +49,9 @@ void setup()
 
     DEBUG_PRINTLN(F("QActive_ctor Dishwasher"));
     QActive_ctor(&dishwasher_inst.super, Q_STATE_CAST(&Dishwasher_initial));
+
+    DEBUG_PRINTLN(F("QActive_ctor Heater"));
+    QActive_ctor(&heater_inst.super, Q_STATE_CAST(&Heater_initial));
 
     BSP_init();
 }

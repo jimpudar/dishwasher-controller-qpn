@@ -78,6 +78,7 @@ void Dishwasher_turnOnPumpMotor()
         BSP_setOutputLogicalState(RELAY_MOTOR, ACTIVE);
     }
 }
+
 void Dishwasher_turnOffPumpMotor() { BSP_setOutputLogicalState(RELAY_MOTOR, INACTIVE); }
 
 void Dishwasher_turnOnRinseValve() { BSP_setOutputLogicalState(RELAY_FILL, ACTIVE); }

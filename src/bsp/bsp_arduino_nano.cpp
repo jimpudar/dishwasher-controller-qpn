@@ -233,19 +233,11 @@ void QF_onStartup(void)
     TCNT2 = 0U;
 
     // set the output-compare register based on the desired tick frequency
-    OCR2A = (F_CPU / BSP_TICKS_PER_SEC / 1024U) - 1U;
+    OCR2A = (F_CPU / TICKS_PER_SEC / 1024U) - 1U;
 }
 
 void QV_onIdle(void)
 {
-    static uint32_t lastPoll = 0;
-    uint32_t now = millis();
-
-    if (now - lastPoll >= 10000UL) {
-        lastPoll = now;
-        Heater_pollTemperature();
-    }
-
     // called with interrupts DISABLED
     // Put the CPU and peripherals to the low-power mode. You might
     // need to customize the clock management for your application,

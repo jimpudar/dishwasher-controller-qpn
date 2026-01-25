@@ -5,15 +5,17 @@
 // various constants for the application...
 enum
 {
-    BSP_TICKS_PER_SEC = 100, // number of system clock ticks in one second
-    TICKS_PER_MINUTE = (60U * BSP_TICKS_PER_SEC),
+    TICKS_PER_SEC = 100, // number of system clock ticks in one second
+    TICKS_PER_MIN = 60U * TICKS_PER_SEC,
 
-    STARTUP_DELAY_TICKS = 5 * BSP_TICKS_PER_SEC, // allow RTC to come up to temp
-    TIMEDFILL_TIMEOUT_TICKS = 5U * TICKS_PER_MINUTE,
-    WASHCYCLE_TIMEOUT_TICKS = 5U * TICKS_PER_MINUTE,
-    RINSECYCLE_TIMEOUT_TICKS = 2U * TICKS_PER_MINUTE,
+    // TODO: Time how long filling actually takes
+    TIMEDFILL_TIMEOUT_TICKS = 5U * TICKS_PER_MIN,
+    WASHCYCLE_TIMEOUT_TICKS = 60 * TICKS_PER_SEC,
+    RINSECYCLE_TIMEOUT_TICKS = 20 * TICKS_PER_SEC,
+    HEAT_LOOP_TIMEOUT_TICKS = 5U * TICKS_PER_SEC,
 
-    TEMPPOLL_TIMEOUT_TICKS = 10U * BSP_TICKS_PER_SEC,
+    HEAT_UPPER_HYSTERESIS_TEMP = 75, // 167 F
+    HEAT_LOWER_HYSTERESIS_TEMP = 70, // 158 F
 };
 
 typedef enum

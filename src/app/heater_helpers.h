@@ -6,10 +6,21 @@ extern "C"
 {
 #endif
     /**
-     * Check the current temperature and emit the appropriate event
+     * @brief True if the current water temperature is less than the upper hysteresis threshold.
      */
-    void Heater_pollTemperature(void);
-
+    bool Heater_ltUpperHystThresh(void);
+    /**
+     * @brief True if the current water temperature is greater than the lower hysteresis threshold.
+     */
+    bool Heater_gtLowerHystThresh(void);
+    /**
+     * @brief Turn off the heater. Timeouts are handled in QM, this just handles the outputs.
+     */
+    void Heater_stopHeating(void);
+    /**
+     * @brief Turn on the heater. Timeouts are handled in QM, this just handles the outputs.
+     */
+    void Heater_startHeating(void);
 #ifdef __cplusplus
 }
 #endif
