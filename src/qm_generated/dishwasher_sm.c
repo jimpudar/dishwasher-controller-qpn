@@ -171,7 +171,7 @@ QState Dishwasher_WashCycle(Dishwasher * const me) {
         }
         /*.${AOs::Dishwasher::SM::Operating::DoorClosed::WashCycle::Q_TIMEOUT} */
         case Q_TIMEOUT_SIG: {
-            status_ = Q_TRAN(&Dishwasher_RinseCycle);
+            status_ = Q_TRAN(&Dishwasher_Dwell);
             break;
         }
         /*.${AOs::Dishwasher::SM::Operating::DoorClosed::WashCycle::STOP_CLOSE} */
@@ -292,6 +292,28 @@ QState Dishwasher_ManualRinse(Dishwasher * const me) {
         case Q_EXIT_SIG: {
             Dishwasher_turnOffRinseValve();
             status_ = Q_HANDLED();
+            break;
+        }
+        default: {
+            status_ = Q_SUPER(&Dishwasher_DoorClosed);
+            break;
+        }
+    }
+    return status_;
+}
+/*.${AOs::Dishwasher::SM::Operating::DoorClosed::Dwell} ....................*/
+QState Dishwasher_Dwell(Dishwasher * const me) {
+    QState status_;
+    switch (Q_SIG(me)) {
+        /*.${AOs::Dishwasher::SM::Operating::DoorClosed::Dwell} */
+        case Q_ENTRY_SIG: {
+            QActive_armX(&me->super, 0U, DWELL_TIMEOUT_TICKS, 0U);
+            status_ = Q_HANDLED();
+            break;
+        }
+        /*.${AOs::Dishwasher::SM::Operating::DoorClosed::Dwell::Q_TIMEOUT} */
+        case Q_TIMEOUT_SIG: {
+            status_ = Q_TRAN(&Dishwasher_RinseCycle);
             break;
         }
         default: {

@@ -45,6 +45,7 @@ QState Dishwasher_RinseCycle(Dishwasher * const me);
 QState Dishwasher_Idle(Dishwasher * const me);
 QState Dishwasher_ManualWash(Dishwasher * const me);
 QState Dishwasher_ManualRinse(Dishwasher * const me);
+QState Dishwasher_Dwell(Dishwasher * const me);
 QState Dishwasher_DoorOpen(Dishwasher * const me);
 QState Dishwasher_Fault(Dishwasher * const me);
 QState Dishwasher_Startup(Dishwasher * const me);
