@@ -27,10 +27,10 @@ enum
     NUM_INPUTS = 6,
     PIN_INPUT_SWITCH_DOOR = 10,
     PIN_INPUT_SWITCH_FLOAT = 11,
-    PIN_INPUT_SWITCH_MANUALRINSE = A4,
-    PIN_INPUT_SWITCH_MANUALWASH = A5,
-    PIN_INPUT_SWITCH_STOP = A6,
-    PIN_INPUT_SWITCH_TIMEDFILL = A7,
+    PIN_INPUT_SWITCH_MANUALRINSE = A2,
+    PIN_INPUT_SWITCH_MANUALWASH = A3,
+    PIN_INPUT_SWITCH_TIMEDFILL = A4,
+    PIN_INPUT_SWITCH_STOP = A5,
 
     PIN_ANALOG_INPUT_420MA_RTD = A0
 };
@@ -163,16 +163,6 @@ int16_t BSP_readTemperature()
     return temp;
 }
 
-// bodge since I didn't RTFM (A6 and A7 are analog only)
-static bool readDigitalInput(uint8_t pin)
-{
-    if (pin == A6 || pin == A7)
-    {
-        return analogRead(pin) > 512;
-    }
-    return digitalRead(pin);
-}
-
 ISR(TIMER2_COMPA_vect)
 {
     QF_tickXISR(0); // process time events for tick rate 0
@@ -183,7 +173,7 @@ ISR(TIMER2_COMPA_vect)
 
     for (uint8_t i = 0; i < NUM_INPUTS; i++)
     {
-        uint8_t reading = readDigitalInput(inputs[i].pin);
+        uint8_t reading = digitalRead(inputs[i].pin);
 
         if (reading == last[i])
         {
