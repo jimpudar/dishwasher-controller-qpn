@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<model version="5.1.3" links="0">
+<model version="5.2.3" links="0">
  <documentation>State machine for the AM-12a-R1 Replacement Dishwasher Controller</documentation>
  <framework name="qpn"/>
  <package name="AOs" stereotype="0x02">
@@ -219,8 +219,9 @@ Dishwasher_startIdle();</entry>
       <documentation>This is the first state that the dishwasher enters upon turning on.
 
 We can't have a default transition with a choice, so this is the workaround. All this does is transition to either the door open or door closed state.</documentation>
-      <entry>Dishwasher_startup((QActive *) me);</entry>
-      <tran trig="STARTUP">
+      <entry>QActive_armX(&amp;me-&gt;super, 0U, WARMUP_TIMEOUT_TICKS, 0U);
+Dishwasher_startup((QActive *) me);</entry>
+      <tran trig="Q_TIMEOUT">
        <choice target="../../../4">
         <guard>BSP_isDoorClosed()</guard>
         <choice_glyph conn="77,32,5,0,-18,12">
@@ -238,7 +239,7 @@ We can't have a default transition with a choice, so this is the workaround. All
        </tran_glyph>
       </tran>
       <state_glyph node="25,20,30,18">
-       <entry box="1,2,28,4"/>
+       <entry box="1,2,27,9"/>
       </state_glyph>
      </state>
      <state_glyph node="3,12,126,223"/>

@@ -12,10 +12,7 @@ void Dishwasher_startup(QActive *me)
     {
         DEBUG_PRINTLN(F("startup with manual engaged"));
         QACTIVE_POST(me, STARTUP_FAULT_SIG, 0U);
-        return;
     }
-
-    QACTIVE_POST(me, STARTUP_SIG, 0U);
 }
 
 void Dishwasher_handleDoorOpening()

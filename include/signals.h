@@ -5,9 +5,7 @@
 
 enum DishwasherSignals
 {
-    STARTUP_SIG = Q_USER_SIG,
-
-    DOOR_OPEN_SIG,
+    DOOR_OPEN_SIG = Q_USER_SIG,
     DOOR_CLOSE_SIG,
     FLOAT_OPEN_SIG,
     FLOAT_CLOSE_SIG,

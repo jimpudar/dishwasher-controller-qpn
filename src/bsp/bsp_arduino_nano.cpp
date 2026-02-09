@@ -29,8 +29,8 @@ enum
     PIN_INPUT_SWITCH_FLOAT = 11,
     PIN_INPUT_SWITCH_MANUALRINSE = A2,
     PIN_INPUT_SWITCH_MANUALWASH = A3,
-    PIN_INPUT_SWITCH_TIMEDFILL = A4,
-    PIN_INPUT_SWITCH_STOP = A5,
+    PIN_INPUT_SWITCH_STOP = A4,
+    PIN_INPUT_SWITCH_TIMEDFILL = A5,
 
     PIN_ANALOG_INPUT_420MA_RTD = A0
 };
@@ -96,6 +96,26 @@ static const InputPinConfig inputs[] = {
 // Modified in the ISR
 static volatile uint8_t stable[NUM_INPUTS] = {HIGH, HIGH, HIGH, HIGH, HIGH, HIGH};
 
+static void debugPrintSignalName(uint8_t sig)
+{
+    switch (sig)
+    {
+    case DOOR_OPEN_SIG:        DEBUG_PRINT(F("DOOR_OPEN_SIG")); break;
+    case DOOR_CLOSE_SIG:       DEBUG_PRINT(F("DOOR_CLOSE_SIG")); break;
+    case FLOAT_OPEN_SIG:       DEBUG_PRINT(F("FLOAT_OPEN_SIG")); break;
+    case FLOAT_CLOSE_SIG:      DEBUG_PRINT(F("FLOAT_CLOSE_SIG")); break;
+    case MANUALRINSE_OPEN_SIG: DEBUG_PRINT(F("MANUALRINSE_OPEN_SIG")); break;
+    case MANUALRINSE_CLOSE_SIG:DEBUG_PRINT(F("MANUALRINSE_CLOSE_SIG")); break;
+    case MANUALWASH_OPEN_SIG:  DEBUG_PRINT(F("MANUALWASH_OPEN_SIG")); break;
+    case MANUALWASH_CLOSE_SIG: DEBUG_PRINT(F("MANUALWASH_CLOSE_SIG")); break;
+    case TIMEDFILL_OPEN_SIG:   DEBUG_PRINT(F("TIMEDFILL_OPEN_SIG")); break;
+    case TIMEDFILL_CLOSE_SIG:  DEBUG_PRINT(F("TIMEDFILL_CLOSE_SIG")); break;
+    case STOP_OPEN_SIG:        DEBUG_PRINT(F("STOP_OPEN_SIG")); break;
+    case STOP_CLOSE_SIG:       DEBUG_PRINT(F("STOP_CLOSE_SIG")); break;
+    default:                   DEBUG_PRINT(sig); break;
+    }
+}
+
 bool BSP_isDoorClosed() { return stable[SWITCH_DOOR] == LOW; }
 
 bool BSP_isFloatClosed() { return stable[SWITCH_FLOAT] == LOW; }
@@ -120,6 +140,10 @@ void BSP_init()
     {
         // We have hardware pullups on every input
         pinMode(inputs[i].pin, INPUT);
+
+        // Seed stable state with actual pin value so the debounce ISR
+        // doesn't see a false transition at startup.
+        stable[i] = digitalRead(inputs[i].pin);
     }
 
     // Initialize the 4-20mA input pin
@@ -139,6 +163,9 @@ int16_t BSP_readTemperature()
     // oversample to 1023 * 4 == 4092 bits
 
     uint16_t adc = sum >> 2;
+    DEBUG_PRINT(F("Read ADC: "));
+    DEBUG_PRINTLN(adc);
+
     if (adc < 750)
     { // ~3.7mA threshold in 12-bit scale indicates open RDT loop
         DEBUG_PRINT(F("FAULT temp adc: "));
@@ -189,7 +216,9 @@ ISR(TIMER2_COMPA_vect)
                 {
                     DEBUG_PRINT(F("INPUT "));
                     DEBUG_PRINT(inputs[i].pin);
-                    DEBUG_PRINTLN(F(" WENT LOW"));
+                    DEBUG_PRINT(F(" WENT LOW, SENT "));
+                    debugPrintSignalName(inputs[i].lowSignal);
+                    DEBUG_PRINTLN();
                     if (inputs[i].routeToDishwasher)
                         QACTIVE_POST_ISR(AO_Dishwasher, inputs[i].lowSignal, i);
                     // if (inputs[i].routeToHeater) QACTIVE_POST_ISR(AO_Heater, inputs[i].lowSignal, i);
@@ -198,7 +227,9 @@ ISR(TIMER2_COMPA_vect)
                 {
                     DEBUG_PRINT(F("INPUT "));
                     DEBUG_PRINT(inputs[i].pin);
-                    DEBUG_PRINTLN(F(" WENT HIGH"));
+                    DEBUG_PRINT(F(" WENT HIGH, SENT "));
+                    debugPrintSignalName(inputs[i].highSignal);
+                    DEBUG_PRINTLN();
                     if (inputs[i].routeToDishwasher)
                         QACTIVE_POST_ISR(AO_Dishwasher, inputs[i].highSignal, i);
                     // if (inputs[i].routeToHeater) QACTIVE_POST_ISR(AO_Heater, inputs[i].highSignal, i);

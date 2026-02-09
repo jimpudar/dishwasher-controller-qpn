@@ -8,6 +8,7 @@ enum
     TICKS_PER_SEC = 100, // number of system clock ticks in one second
     TICKS_PER_MIN = 60U * TICKS_PER_SEC,
 
+    WARMUP_TIMEOUT_TICKS = 1U * TICKS_PER_SEC,
     // TODO: Time how long filling actually takes
     TIMEDFILL_TIMEOUT_TICKS = 15U * TICKS_PER_SEC,
     WASHCYCLE_TIMEOUT_TICKS = 60 * TICKS_PER_SEC,
