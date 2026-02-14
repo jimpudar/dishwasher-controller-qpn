@@ -87,11 +87,6 @@ QState Heater_Heating(Heater * const me) {
             status_ = Q_HANDLED();
             break;
         }
-        /*${AOs::Heater::SM::Operating::Heating::FLOAT_OPEN} */
-        case FLOAT_OPEN_SIG: {
-            status_ = Q_TRAN(&Heater_NotHeating);
-            break;
-        }
         default: {
             status_ = Q_SUPER(&Heater_Operating);
             break;
@@ -112,8 +107,8 @@ QState Heater_HeatingInner(Heater * const me) {
         }
         /*${AOs::Heater::SM::Operating::Heating::HeatingInner::Q_TIMEOUT} */
         case Q_TIMEOUT_SIG: {
-            /*${AOs::Heater::SM::Operating::Heating::HeatingInner::Q_TIMEOUT::[Heater_ltUpperHystThresh()]} */
-            if (Heater_ltUpperHystThresh()) {
+            /*${AOs::Heater::SM::Operating::Heating::HeatingInner::Q_TIMEOUT::[Heater_shouldHeatStayOn()]} */
+            if (Heater_shouldHeatStayOn()) {
                 status_ = Q_TRAN(&Heater_HeatingInner);
             }
             /*${AOs::Heater::SM::Operating::Heating::HeatingInner::Q_TIMEOUT::[else]} */
@@ -165,8 +160,8 @@ QState Heater_NotHeatingInner(Heater * const me) {
         }
         /*${AOs::Heater::SM::Operating::NotHeating::NotHeatingInner::Q_TIMEOUT} */
         case Q_TIMEOUT_SIG: {
-            /*${AOs::Heater::SM::Operating::NotHeating::NotHeatingInner::Q_TIMEOUT::[Heater_gtLowerHystThresh()]} */
-            if (Heater_gtLowerHystThresh()) {
+            /*${AOs::Heater::SM::Operating::NotHeating::NotHeatingInner::Q_TIMEOUT::[Heater_shouldHeatStayOff()]} */
+            if (Heater_shouldHeatStayOff()) {
                 status_ = Q_TRAN(&Heater_NotHeatingInner);
             }
             /*${AOs::Heater::SM::Operating::NotHeating::NotHeatingInner::Q_TIMEOUT::[else]} */

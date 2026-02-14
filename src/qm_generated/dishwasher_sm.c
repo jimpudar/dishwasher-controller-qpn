@@ -360,6 +360,14 @@ QState Dishwasher_DoorOpen(Dishwasher * const me) {
         /*${AOs::Dishwasher::SM::Operating::DoorOpen} */
         case Q_ENTRY_SIG: {
             Dishwasher_handleDoorOpening();
+            QActive_armX(&me->super, 0U, HEAT_LOOP_TIMEOUT_TICKS, 0U);
+            Dishwasher_startIdle();
+            status_ = Q_HANDLED();
+            break;
+        }
+        /*${AOs::Dishwasher::SM::Operating::DoorOpen} */
+        case Q_EXIT_SIG: {
+            Dishwasher_stopIdle();
             status_ = Q_HANDLED();
             break;
         }

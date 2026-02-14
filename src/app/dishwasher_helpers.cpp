@@ -76,6 +76,7 @@ void Dishwasher_turnOnPumpMotor()
     if (BSP_isFloatClosed())
     {
         BSP_setOutputLogicalState(RELAY_MOTOR, ACTIVE);
+        BSP_setOutputLogicalState(RELAY_DETERGENT, ACTIVE);
     }
 }
 
@@ -83,29 +84,32 @@ void Dishwasher_turnOffPumpMotor()
 {
     DEBUG_PRINTLN(F("PUMP OFF"));
     BSP_setOutputLogicalState(RELAY_MOTOR, INACTIVE);
+    BSP_setOutputLogicalState(RELAY_DETERGENT, INACTIVE);
 }
 
 void Dishwasher_turnOnRinseValve()
 {
     DEBUG_PRINTLN(F("RINSE VALVE ON"));
     BSP_setOutputLogicalState(RELAY_FILL, ACTIVE);
+    BSP_setOutputLogicalState(RELAY_RINSEAID, ACTIVE);
 }
 void Dishwasher_turnOffRinseValve()
 {
     DEBUG_PRINTLN(F("RINSE VALVE OFF"));
     BSP_setOutputLogicalState(RELAY_FILL, INACTIVE);
+    BSP_setOutputLogicalState(RELAY_RINSEAID, INACTIVE);
 }
 
 void Dishwasher_startIdle()
 {
     DEBUG_PRINTLN(F("START IDLE"));
     int16_t temp = BSP_readTemperature();
-    if (!BSP_isFloatClosed() || temp < MINIMUM_WASH_TEMP)
+    if (!BSP_isFloatClosed() || temp <= READY_LIGHT_TEMP)
     {
         DEBUG_PRINTLN(F("READY LAMP OFF"));
         BSP_setOutputLogicalState(INDICATOR_READY, INACTIVE);
     }
-    else if (BSP_isFloatClosed() && temp >= MINIMUM_WASH_TEMP && temp <= MAXIMUM_SAFE_TEMP)
+    else if (BSP_isFloatClosed() && temp > READY_LIGHT_TEMP && temp <= MAXIMUM_SAFE_TEMP)
     {
         DEBUG_PRINTLN(F("READY LAMP ON"));
         BSP_setOutputLogicalState(INDICATOR_READY, ACTIVE);

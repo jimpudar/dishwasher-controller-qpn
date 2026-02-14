@@ -21,6 +21,10 @@ extern "C"
      * @brief Turn on the heater. Timeouts are handled in QM, this just handles the outputs.
      */
     void Heater_startHeating(void);
+
+    bool Heater_shouldHeatStayOn(void);
+
+    bool Heater_shouldHeatStayOff(void);
 #ifdef __cplusplus
 }
 #endif

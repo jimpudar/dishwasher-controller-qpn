@@ -31,3 +31,13 @@ bool Heater_gtLowerHystThresh()
     int16_t temp = BSP_readTemperature();
     return temp > HEAT_LOWER_HYSTERESIS_TEMP;
 }
+
+bool Heater_shouldHeatStayOff()
+{
+    return Heater_gtLowerHystThresh() || !BSP_isFloatClosed();
+}
+
+bool Heater_shouldHeatStayOn()
+{
+    return Heater_ltUpperHystThresh() && BSP_isFloatClosed();
+}
