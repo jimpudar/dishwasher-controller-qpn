@@ -383,6 +383,11 @@ QState Dishwasher_DoorOpen(Dishwasher * const me) {
             }
             break;
         }
+        /*${AOs::Dishwasher::SM::Operating::DoorOpen::Q_TIMEOUT} */
+        case Q_TIMEOUT_SIG: {
+            status_ = Q_TRAN(&Dishwasher_DoorOpen);
+            break;
+        }
         default: {
             status_ = Q_SUPER(&Dishwasher_Operating);
             break;

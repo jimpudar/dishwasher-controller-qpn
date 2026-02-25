@@ -207,6 +207,11 @@ Dishwasher_startIdle();</entry>
         <action box="0,-1,12,2"/>
        </tran_glyph>
       </tran>
+      <tran trig="Q_TIMEOUT" target="..">
+       <tran_glyph conn="119,48,1,1,6,7,-6">
+        <action box="0,-2,10,2"/>
+       </tran_glyph>
+      </tran>
       <state_glyph node="89,44,30,18">
        <entry box="1,2,28,9"/>
        <exit box="1,11,26,5"/>
