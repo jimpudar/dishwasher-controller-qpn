@@ -121,11 +121,6 @@ QState Dishwasher_DoorClosed(Dishwasher * const me) {
             status_ = Q_TRAN(&Dishwasher_ManualRinse);
             break;
         }
-        /*${AOs::Dishwasher::SM::Operating::DoorClosed::FLOAT_OPEN} */
-        case FLOAT_OPEN_SIG: {
-            status_ = Q_TRAN(&Dishwasher_Idle);
-            break;
-        }
         default: {
             status_ = Q_SUPER(&Dishwasher_Operating);
             break;
@@ -198,6 +193,11 @@ QState Dishwasher_WashCycle(Dishwasher * const me) {
             status_ = Q_TRAN(&Dishwasher_Idle);
             break;
         }
+        /*${AOs::Dishwasher::SM::Operating::DoorClosed::WashCycle::FLOAT_OPEN} */
+        case FLOAT_OPEN_SIG: {
+            status_ = Q_TRAN(&Dishwasher_Idle);
+            break;
+        }
         default: {
             status_ = Q_SUPER(&Dishwasher_DoorClosed);
             break;
@@ -231,6 +231,11 @@ QState Dishwasher_RinseCycle(Dishwasher * const me) {
         }
         /*${AOs::Dishwasher::SM::Operating::DoorClosed::RinseCycle::STOP_CLOSE} */
         case STOP_CLOSE_SIG: {
+            status_ = Q_TRAN(&Dishwasher_Idle);
+            break;
+        }
+        /*${AOs::Dishwasher::SM::Operating::DoorClosed::RinseCycle::FLOAT_OPEN} */
+        case FLOAT_OPEN_SIG: {
             status_ = Q_TRAN(&Dishwasher_Idle);
             break;
         }
@@ -293,6 +298,11 @@ QState Dishwasher_ManualWash(Dishwasher * const me) {
             status_ = Q_HANDLED();
             break;
         }
+        /*${AOs::Dishwasher::SM::Operating::DoorClosed::ManualWash::FLOAT_OPEN} */
+        case FLOAT_OPEN_SIG: {
+            status_ = Q_TRAN(&Dishwasher_Idle);
+            break;
+        }
         default: {
             status_ = Q_SUPER(&Dishwasher_DoorClosed);
             break;
@@ -315,6 +325,11 @@ QState Dishwasher_ManualRinse(Dishwasher * const me) {
         case Q_EXIT_SIG: {
             Dishwasher_turnOffRinseValve();
             status_ = Q_HANDLED();
+            break;
+        }
+        /*${AOs::Dishwasher::SM::Operating::DoorClosed::ManualRinse::FLOAT_OPEN} */
+        case FLOAT_OPEN_SIG: {
+            status_ = Q_TRAN(&Dishwasher_Idle);
             break;
         }
         default: {
@@ -342,6 +357,11 @@ QState Dishwasher_Dwell(Dishwasher * const me) {
         }
         /*${AOs::Dishwasher::SM::Operating::DoorClosed::Dwell::STOP_CLOSE} */
         case STOP_CLOSE_SIG: {
+            status_ = Q_TRAN(&Dishwasher_Idle);
+            break;
+        }
+        /*${AOs::Dishwasher::SM::Operating::DoorClosed::Dwell::FLOAT_OPEN} */
+        case FLOAT_OPEN_SIG: {
             status_ = Q_TRAN(&Dishwasher_Idle);
             break;
         }
